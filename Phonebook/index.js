@@ -23,11 +23,17 @@ let persons = [
         number: '39-23-6423122'
     }
 ]
-
 app.get('/api/persons', (req, res) => {
     res.json(persons)
+})
+app.get('/info', (req, res) => {
+    const amount = persons.length
+    //const id = Number(request.params.id)
+   // const person = persons.find(person => person.id == id)
+    res.send('Phonebook has info for ' + amount + ' people' + '</br>' + new Date())
+
 })
 
 const PORT = 3001
 app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+console.log(`Server running on port ${PORT}`) 
