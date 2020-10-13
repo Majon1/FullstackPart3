@@ -66,12 +66,13 @@ app.get('/info', (req, res) => {
     res.send('Phonebook has info for ' + amount + ' people' + '</br>' + new Date())
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(person => person.id !== id)
-  
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+  .then(result => {
     response.status(204).end()
   })
+  .catch(error => next(error))
+})
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
