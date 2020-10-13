@@ -1,9 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
-const url =
-  `mongodb+srv://username:password@cluster0.al01h.mongodb.net/persons?retryWrites=true&w=majority`
+const Person = require('./models/person')
+
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -18,28 +18,9 @@ app.use(express.static('build'))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :json'))
 
 
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-
-const personSchema = new mongoose.Schema({
-  id: Number,
-  name: String,
-  number: String,
-})
-personSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-  }
-})
-
-const Person = mongoose.model('Person', personSchema)
-
   const generateId = () => {
-    const maxId = persons.length > 0
-      ? Math.random(...persons.map(n => n.id))
-      : 0
-    return maxId + 1
+    const id = Math.random()*20
+    return id
   }
   
   app.post('/api/persons', (request, response) => {
@@ -55,21 +36,15 @@ const Person = mongoose.model('Person', personSchema)
           error: 'number missing' 
         })
       }
-    if (persons.some(person => person.name.toLowerCase() === body.name.toLowerCase()))
-    {
-        return response.status(400).json({ 
-            error: body.name + ' already in phonebook!' 
-          })
-    }
-    const person = {
+    const person = new Person({
       id: generateId(),
       name: body.name,
       number: body.number,
-    }
+    })
 
-    persons = persons.concat(person)
-  
-    response.json(person)
+    person.save().then(savedNote => {
+      response.json(savedNote)
+    })
   })
 
 app.get('/api/persons', (req, res) => {
@@ -79,22 +54,18 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-    if(person)
-    {
-    response.json(person)
-    }
-    else 
-    {
-        response.status(404).end()
-    }
+    Person
+    .findById(request.params.id)
+    .then (person => {
+      response.json(person)
+    })
   })
 
 app.get('/info', (req, res) => {
-    const amount = persons.length
+    const amount = person.length
     res.send('Phonebook has info for ' + amount + ' people' + '</br>' + new Date())
 })
+
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     persons = persons.filter(person => person.id !== id)
@@ -102,7 +73,7 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
   })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
 console.log(`Server running on port ${PORT}`) 
 })
