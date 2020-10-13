@@ -5,6 +5,8 @@ if (process.argv.length < 3) {
   process.exit(1)
 }
 
+    
+
 const password = process.argv[2]
 const names = process.argv[3]
 const numbers = process.argv[4]
@@ -33,11 +35,19 @@ person.save().then(result => {
   console.log('added ' + person.name + ' number ' + person.number + ' to phonebook')
   mongoose.connection.close()
 })
-/*
+
+if (process.argv.length < 4) {
 //show all persons
-Person.find({}).then(result => {
+Person
+.find({})
+.then(result => {
+    console.log('phonebook:')
     result.forEach(person => {
-      console.log(person)
-    })
+      console.log(person.name, person.number)
+    
     mongoose.connection.close()
-  })*/
+  })
+  process.exit()
+}) 
+
+}
