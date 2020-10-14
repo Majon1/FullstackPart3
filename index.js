@@ -77,19 +77,26 @@ app.delete('/api/persons/:id', (request, response, next) => {
   })
   .catch(error => next(error))
 })
+
 app.put('api/notes/:id', (request, response, next) => {
-  const body = request.body
+ /* const body = request.body
   const changes = {
+    id: body.id,
     name: body.name,
     number: body.number,
-  }
+  }*/
   Person
-  .findByIdAndUpdate(request.params.id, changes) 
-  .then(updatedNumber => {
+  .findByIdAndUpdate(request.params.id, { 
+   $set: {
+     name: request.body.name,
+     number: request.body.number
+   }})
+  .save().then(updatedNumber => { //not working as it should, tried adding save() without any luck
     response.json(updatedNumber)
   })
   .catch(error => next(error))
-})
+ })
+
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
