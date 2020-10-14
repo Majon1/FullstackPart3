@@ -23,10 +23,10 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :j
     return id
   }
   
-  app.post('/api/persons', (request, response) => {
+  app.post('/api/persons', (request, response, next) => {
     const body = request.body
   
-    if (!body.name) {
+   /* if (!body.name) {
         return response.status(400).json({ 
           error: 'name missing' 
         })
@@ -35,16 +35,19 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :j
         return response.status(400).json({ 
           error: 'number missing' 
         })
-      }
+      }*/
     const person = new Person({
       id: generateId(),
       name: body.name,
       number: body.number,
     })
 
-    person.save().then(savedNote => {
-      response.json(savedNote)
+    person
+    .save()
+    .then(savedNote => {
+      response.json(savedNote.toJSON())
     })
+    .catch(error => next(error))
   })
 
 app.get('/api/persons', (req, res) => {
@@ -103,6 +106,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id'})
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
   next(error)
 }
