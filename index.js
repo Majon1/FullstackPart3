@@ -53,7 +53,7 @@ app.get('/api/persons', (req, res) => {
     })
 })
 
-app.get('/api/persons/:id', (request, respons, next) => {
+app.get('/api/persons/:id', (request, response, next) => {
     Person
     .findById(request.params.id)
     .then (person => {
@@ -63,8 +63,11 @@ app.get('/api/persons/:id', (request, respons, next) => {
   })
 
 app.get('/info', (req, res) => {
-    const amount = person.length
-    res.send('Phonebook has info for ' + amount + ' people' + '</br>' + new Date())
+    Person
+    .countDocuments(req.params.id)
+    .then(p => {
+      res.send('Phonebook has info for ' + p + ' persons' + '</br>' + new Date())
+    })
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -74,6 +77,20 @@ app.delete('/api/persons/:id', (request, response, next) => {
   })
   .catch(error => next(error))
 })
+app.put('api/notes/:id', (request, response, next) => {
+  const body = request.body
+  const changes = {
+    name: body.name,
+    number: body.number,
+  }
+  Person
+  .findByIdAndUpdate(request.params.id, changes) 
+  .then(updatedNumber => {
+    response.json(updatedNumber)
+  })
+  .catch(error => next(error))
+})
+
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 

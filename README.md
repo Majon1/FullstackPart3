@@ -1,1 +1,1 @@
-ex 3.10 [link](https://desolate-dusk-93304.herokuapp.com/api/persons)
+ex 3.10 backend [link](https://desolate-dusk-93304.herokuapp.com/api/persons)
