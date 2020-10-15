@@ -25,17 +25,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :j
   
   app.post('/api/persons', (request, response, next) => {
     const body = request.body
-  
-   /* if (!body.name) {
-        return response.status(400).json({ 
-          error: 'name missing' 
-        })
-      }
-    if (!body.number) {
-        return response.status(400).json({ 
-          error: 'number missing' 
-        })
-      }*/
+
     const person = new Person({
       id: generateId(),
       name: body.name,
@@ -81,25 +71,20 @@ app.delete('/api/persons/:id', (request, response, next) => {
   .catch(error => next(error))
 })
 
-app.put('api/notes/:id', (request, response, next) => {
- /* const body = request.body
-  const changes = {
-    id: body.id,
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
     name: body.name,
     number: body.number,
-  }*/
+  }
   Person
-  .findByIdAndUpdate(request.params.id, { 
-   $set: {
-     name: request.body.name,
-     number: request.body.number
-   }})
-  .save().then(updatedNumber => { //not working as it should, tried adding save() without any luck
-    response.json(updatedNumber)
+  .findByIdAndUpdate(request.params.id, { number: person.number }, { new:true })
+  .then(updatedNumber => {
+    response.json(updatedNumber.toJSON())
   })
   .catch(error => next(error))
  })
-
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)

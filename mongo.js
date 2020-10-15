@@ -8,10 +8,8 @@ if (process.argv.length < 3) {
 const password = process.argv[2]
 const names = process.argv[3]
 const numbers = process.argv[4]
-const url =
-  `mongodb+srv://username:password@cluster0.al01h.mongodb.net/persons?retryWrites=true&w=majority
-  `
-  //username:password
+const url = process.env.MONGODB_URI
+
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 
