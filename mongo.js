@@ -33,17 +33,17 @@ person.save().then(result => {
 })
 
 if (process.argv.length < 4) {
-//show all persons
-Person
-.find({})
-.then(result => {
-    console.log('phonebook:')
-    result.forEach(person => {
-      console.log(person.name, person.number)
-    
-    mongoose.connection.close()
-  })
-  process.exit()
-}) 
+  //show all persons
+  Person
+    .find({})
+    .then(result => {
+      console.log('phonebook:')
+      result.forEach(person => {
+        console.log(person.name, person.number)
+
+        mongoose.connection.close()
+      })
+      process.exit()
+    })
 
 }
